@@ -36,6 +36,10 @@ python orchestrator.py --use_gpu 0 --debug true --perform evaluate --models resn
 python retrain.py --use_gpu 0 --model_name resnet_50_v2 --jpeg_compression_quality 90
 ```
 
+## Video Demo
+
+We have uploaded a video demo, which you can access [here](https://youtu.be/W119nXS4xGE).
+
 ## Researchers
 
 |  Name                 | Affiliation                     |

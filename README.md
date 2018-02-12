@@ -6,6 +6,8 @@ This is the code repository for the under-review KDD 2018 Applied Data Science p
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 
+![figure1](fig1.png)
+
 ## Installation and Setup
 
 ### Install Dependencies

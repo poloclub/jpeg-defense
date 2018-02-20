@@ -2,13 +2,12 @@ import tensorflow as tf
 
 from cleverhans.model import Model as CleverHansModel
 
-from heimdall.model import BaseModel as HeimdallModel
 from utils.slim.nets.resnet_v2 import resnet_arg_scope, resnet_v2_50
 
 slim = tf.contrib.slim
 
 
-class ResNet50v2(CleverHansModel, HeimdallModel):
+class ResNet50v2(CleverHansModel):
     default_image_size = 299
 
     def __init__(self, x, checkpoint_path, num_classes=1001, is_training=False):
@@ -34,10 +33,6 @@ class ResNet50v2(CleverHansModel, HeimdallModel):
         self.net = net
         self.end_points = end_points
 
-    # Cleverhans methods
-    def get_layer_names(self):
-        return ['logits', 'probs']
-
     def fprop(self, x):
         if x is self.x:
             return self.end_points
@@ -51,7 +46,3 @@ class ResNet50v2(CleverHansModel, HeimdallModel):
             end_points['probs'] = tf.nn.softmax(end_points['logits'])
 
             return end_points
-
-    # Heimdall methods
-    def predict_labels(self, batch=None):
-        pass

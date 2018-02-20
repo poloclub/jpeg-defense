@@ -1,12 +1,10 @@
-import os
-
 import tensorflow as tf
 from tqdm import tqdm
+from utils.slim.preprocessing import inception_preprocessing
 
 from constants import *
 from params import *
-from utils.running_stats import RunningAverageL2DistanceNormalized, RunningAccuracy
-from utils.slim.preprocessing import inception_preprocessing
+from utils.running_stats import RunningAverageL2DistanceNormalized
 from utils.tf_io import load_image_data_from_tfrecords, get_examples_for_instances
 
 slim = tf.contrib.slim

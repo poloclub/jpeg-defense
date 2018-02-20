@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from cleverhans.model import Model as CleverHansModel
 
-from tf.slim.nets.resnet_v2 import resnet_arg_scope, resnet_v2_101
+from utils.slim.nets.resnet_v2 import resnet_arg_scope, resnet_v2_101
 
 slim = tf.contrib.slim
 
@@ -32,10 +32,6 @@ class ResNet101v2(CleverHansModel):
         self.x = x
         self.net = net
         self.end_points = end_points
-
-    # Cleverhans methods
-    def get_layer_names(self):
-        return ['logits', 'probs']
 
     def fprop(self, x):
         assert x is self.x

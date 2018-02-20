@@ -1,15 +1,12 @@
 import tensorflow as tf
-
 from cleverhans.model import Model as CleverHansModel
 
 import inception_v4_base
 
-from heimdall.model import BaseModel as HeimdallModel
-
 slim = tf.contrib.slim
 
 
-class InceptionV4(CleverHansModel, HeimdallModel):
+class InceptionV4(CleverHansModel):
     default_image_size = inception_v4_base.default_image_size
 
     def __init__(self, x, checkpoint_path, num_classes=1001, is_training=False):
@@ -33,14 +30,6 @@ class InceptionV4(CleverHansModel, HeimdallModel):
         self.net = net
         self.end_points = end_points
 
-    # Cleverhans methods
-    def get_layer_names(self):
-        return ['logits', 'probs']
-
     def fprop(self, x):
         assert x is self.x
         return self.end_points
-
-    # Heimdall methods
-    def predict_labels(self, batch=None):
-        pass

@@ -89,7 +89,7 @@ if args.perform == 'attack':
 
                 print opt
 
-                attack_evaluate_and_save_images(opt, debug=args.debug, experiment_scope=args.experiment_scope)
+                attack_and_save_images(opt, debug=args.debug, experiment_scope=args.experiment_scope)
 
 elif args.perform == 'defend':
     attacks = args.attacks.split(',')

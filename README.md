@@ -34,10 +34,6 @@ python orchestrator.py --use_gpu 0 --debug false --perform attack --models resne
 python orchestrator.py --use_gpu 0 --debug true --perform evaluate --models resnet_50_v2 --checkpoint_paths /home/.../model.ckpt --attacks fgsm --defenses jpeg --attack_ablations '{"fgsm": [{"ord": Infinity, "eps": 2}]}' --defense_ablations '{"jpeg": [{"quality": 60}]}'
 ```
 
-```bash
-python retrain.py --use_gpu 0 --model_name resnet_50_v2 --jpeg_compression_quality 90
-```
-
 ## Video Demo
 
 We have uploaded a video demo, which you can access [here](https://youtu.be/W119nXS4xGE).

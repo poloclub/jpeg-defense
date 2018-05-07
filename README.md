@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the code repository for the accepteted KDD 2018 Applied Data Science paper: **Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression**. Visit our research group homepage [Polo Club of Data Science] (https://poloclub.github.io) at [Georgia Tech] (http://www.gatech.edu) for more related research!
+This is the code repository for the accepteted KDD 2018 Applied Data Science paper: **Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression**. Visit our research group homepage [Polo Club of Data Science](https://poloclub.github.io) at [Georgia Tech](http://www.gatech.edu) for more related research!
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 
@@ -48,11 +48,11 @@ We have uploaded a video demo, which you can access [here](https://youtu.be/W119
 
 |  Name                 | Affiliation                     |
 |-----------------------|---------------------------------|
-| Nilaksh Das           | Georgia Institute of Technology |
-| Madhuri Shanbhogue    | Georgia Institute of Technology |
-| Shang-Tse Chen        | Georgia Institute of Technology |
-| Fred Hohman           | Georgia Institute of Technology |
-| Siwei Li              | Georgia Institute of Technology |
-| Li Chen               | Intel Corporation               |
-| Michael E. Kounavis   | Intel Corporation               |
-| Polo Chau             | Georgia Institute of Technology |
+| [Nilaksh Das](http://nilakshdas.com)           | Georgia Institute of Technology |
+| [Madhuri Shanbhogue](https://www.linkedin.com/in/madhuri-shanbhogue/)    | Georgia Institute of Technology |
+| [Shang-Tse Chen](https://www.cc.gatech.edu/~schen351/)        | Georgia Institute of Technology |
+| [Fred Hohman](http://fredhohman.com)           | Georgia Institute of Technology |
+| [Siwei Li](https://rsli.github.io)              | Georgia Institute of Technology |
+| [Li Chen](https://www.linkedin.com/in/li-chen-phd-b2a10289/)               | Intel Corporation               |
+| [Michael E. Kounavis](https://www.linkedin.com/in/michael-kounavis-5bbb599/)   | Intel Corporation               |
+| [Polo Chau](https://www.cc.gatech.edu/~dchau/)             | Georgia Institute of Technology |

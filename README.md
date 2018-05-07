@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the code repository for the accepteted KDD 2018 Applied Data Science paper: **Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression**
+This is the code repository for the accepteted KDD 2018 Applied Data Science paper: **Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression**. Visit our research group homepage [Polo Club of Data Science] (https://poloclub.github.io) at [Georgia Tech] (http://www.gatech.edu) for more related research!
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 

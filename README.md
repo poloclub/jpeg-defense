@@ -6,7 +6,7 @@ This is the code repository for the accepted [KDD 2018](http://www.kdd.org/kdd20
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 
-![figure1](fig1.png)
+![shield-overview](shield-overview.png)
 
 ## Installation and Setup
 

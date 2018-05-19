@@ -1,8 +1,8 @@
-# Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression
+# SHIELD: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression
 
 ## Overview
 
-This is the code repository for the accepted [KDD 2018](http://www.kdd.org/kdd2018/) Applied Data Science paper: **Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression**. Visit our research group homepage [Polo Club of Data Science](https://poloclub.github.io) at [Georgia Tech](http://www.gatech.edu) for more related research!
+This is the code repository for the accepted [KDD 2018](http://www.kdd.org/kdd2018/) Applied Data Science paper: **[SHIELD: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression](https://arxiv.org/abs/1802.06816)**. Visit our research group homepage [Polo Club of Data Science](https://poloclub.github.io) at [Georgia Tech](http://www.gatech.edu) for more related research!
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 
@@ -49,7 +49,7 @@ We have uploaded a video demo, which you can access [here](https://youtu.be/W119
 
 ```
 @article{das2018shield, 
-   title={Shield: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression}, 
+   title={SHIELD: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression}, 
    author={Das, Nilaksh and Shanbhogue, Madhuri and Chen, Shang-Tse and Hohman, Fred and Li, Siwei and Chen, Li and Kounavis, Michael E and Chau, Duen Horng}, 
    booktitle={Proceedings of the 24nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 
    year={2018}, 

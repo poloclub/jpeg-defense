@@ -62,11 +62,11 @@ We have uploaded a video demo, which you can access [here](https://youtu.be/W119
 
 |  Name                 | Affiliation                     |
 |-----------------------|---------------------------------|
-| [Nilaksh Das](http://nilakshdas.com)           | Georgia Institute of Technology |
-| [Madhuri Shanbhogue](https://www.linkedin.com/in/madhuri-shanbhogue/)    | Georgia Institute of Technology |
-| [Shang-Tse Chen](https://www.cc.gatech.edu/~schen351/)        | Georgia Institute of Technology |
-| [Fred Hohman](http://fredhohman.com)           | Georgia Institute of Technology |
-| [Siwei Li](https://rsli.github.io)              | Georgia Institute of Technology |
+| [Nilaksh Das](http://nilakshdas.com)           | Georgia Tech |
+| [Madhuri Shanbhogue](https://www.linkedin.com/in/madhuri-shanbhogue/)    | Georgia Tech |
+| [Shang-Tse Chen](https://www.cc.gatech.edu/~schen351/)        | Georgia Tech |
+| [Fred Hohman](http://fredhohman.com)           | Georgia Tech |
+| [Siwei Li](https://rsli.github.io)              | Georgia Tech |
 | [Li Chen](https://www.linkedin.com/in/li-chen-phd-b2a10289/)               | Intel Corporation               |
 | [Michael E. Kounavis](https://www.linkedin.com/in/michael-kounavis-5bbb599/)   | Intel Corporation               |
-| [Polo Chau](https://www.cc.gatech.edu/~dchau/)             | Georgia Institute of Technology |
+| [Polo Chau](https://www.cc.gatech.edu/~dchau/)             | Georgia Tech |

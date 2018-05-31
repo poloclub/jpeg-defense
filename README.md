@@ -31,7 +31,7 @@ HOME_DIR = '' # eg. '/home/yourusername/'
 
 ## Example usage:
 
-The script orchestrator.py can be used to perform (specified using --perform attack|defend|evaluate)
+The script orchestrator.py can be used to perform (specified using --perform attack\|defend\|evaluate)
 
 1. attack - Attacks the specified model with the specified method(s)
 2. defend - Defends the specified attack images with the specified defense

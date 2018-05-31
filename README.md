@@ -45,8 +45,13 @@ python orchestrator.py --use_gpu 0 --debug true --perform evaluate --models resn
 We have uploaded a video demo, which you can access [here](https://youtu.be/W119nXS4xGE).
 
 
-## Citation BibTeX
+## Citation 
 
+**SHIELD: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression.**  
+Nilaksh Das, Madhuri Shanbhogue, Shang-Tse Chen, Fred Hohman, Siwei Li, Li Chen, Michael E. Kounavis, Duen Horng Chau.  
+*ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD) 2018*. London, UK. Aug 19-23, 2018.
+
+### BibTeX
 ```
 @article{das2018shield, 
    title={SHIELD: Fast, Practical Defense and Vaccination for Deep Learning using JPEG Compression}, 

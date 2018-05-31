@@ -8,6 +8,11 @@ The code included here reproduces our techniques (e.g. SHIELD) presented in the 
 
 ![shield-overview](readme/shield-overview.png)
 
+
+## Researh Abstract and Contributions
+The rapidly growing body of research in adversarial machine learning has demonstrated that deep neural networks (DNNs) are highly vulnerable to adversarially generated images. This underscores the urgent need for practical defense that can be readily deployed to combat attacks in real-time. Observing that many attack strategies aim to perturb image pixels in ways that are visually imperceptible, we place JPEG compression at the core of our proposed Shield defense framework, utilizing its capability to effectively "compress away" such pixel manipulation. To immunize a DNN model from artifacts introduced by compression, Shield "vaccinates" a model by re-training it with compressed images, where different compression levels are applied to generate multiple vaccinated models that are ultimately used together in an ensemble defense. On top of that, Shield adds an additional layer of protection by employing randomization at test time that compresses different regions of an image using random compression levels, making it harder for an adversary to estimate the transformation performed. This novel combination of vaccination, ensembling, and randomization makes Shield a fortified multi-pronged protection. We conducted extensive, large-scale experiments using the ImageNet dataset, and show that our approaches eliminate up to 94% of black-box attacks and 98% of gray-box attacks delivered by the recent, strongest attacks, such as Carlini-Wagner's L2 and DeepFool. Our approaches are fast and work without requiring knowledge about the model.
+
+
 ## Installation and Setup
 
 ### Install Dependencies
@@ -41,9 +46,11 @@ python orchestrator.py --use_gpu 0 --debug true --perform evaluate --models resn
 ```
 
 ## Video Demo
+[![YouTube video demo](readme/shield-youtube-thumbnail.jpg)](https://youtu.be/W119nXS4xGE)
 
-We have uploaded a video demo, which you can access [here](https://youtu.be/W119nXS4xGE).
 
+## Paper PDF on arXiv
+[![Paper PDF on arXiv](http://www.arxiv-sanity.com/static/thumbs/1802.06816v1.pdf.jpg)](https://arxiv.org/abs/1802.06816)
 
 ## Citation 
 

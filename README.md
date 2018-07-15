@@ -6,7 +6,7 @@ This is the code repository for the accepted [KDD 2018](http://www.kdd.org/kdd20
 
 The code included here reproduces our techniques (e.g. SHIELD) presented in the paper, and also our experiment results reported, such as using various JPEG compression qualities to remove adversarial perturbation introduced by Carlini-Wagner-L2, DeepFool, I-FSGM, and FSGM.
 
-![shield-overview](readme/shield-overview.png)
+[![SHIELD overview YouTube video](readme/shield-youtube-thumbnail.jpg)](https://youtu.be/zUB2-i7rSb4)
 
 
 ## Research Abstract and Contributions
@@ -46,7 +46,7 @@ python orchestrator.py --use_gpu 0 --debug true --perform evaluate --models resn
 ```
 
 ## Video Demo
-[![YouTube video demo](readme/shield-youtube-thumbnail.jpg)](https://youtu.be/W119nXS4xGE)
+[![YouTube video demo](readme/shield-demo-youtube-thumbnail.jpg)](https://youtu.be/W119nXS4xGE)
 
 
 ## Paper PDF on arXiv

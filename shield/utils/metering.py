@@ -4,6 +4,15 @@ import numpy as np
 
 
 def _thread_safe(fn):
+    """Decorator that expects a class method which has a _lock attribute.
+
+    Args:
+        fn: Method to be wrapped.
+
+    Returns:
+        method: The wrapper method
+    """
+
     def wrapper(*args, **kwargs):
         self = args[0]
 
@@ -18,19 +27,24 @@ def _thread_safe(fn):
 class Meter(object):
     """Base class for creating thread-safe meters.
 
-    Each meter tracks some parameters which are then
-    processed to evaluate the current meter value.
+    A meter accepts parameter values iteratively and
+    computes some metric from these values, e.g.,
+    the AccuracyMeter accepts batches of true and predicted
+    labels iteratively, and evaluates the accuracy
+    over all batches.
 
     Parameter values can be iteratively offered
     to the meter, and the meter uses the corresponding
     private reducer methods to store the values
-    in the original form, or in some processed form.
+    in the original form, or in some processed form, e.g.,
+    the reducer in AccuracyMeter takes the new batches of labels
+    and appends them to the list of all labels.
 
     The meter is thread-safe, i.e., it can be used in
     parallel threads. The parameter values offered in
-    one call are reduced as an atomic unit.
-    This functionality is handled by this base class,
-    and the child classes need only implement the
+    one call are reduced by the reducer as an atomic unit.
+    This functionality is handled by the base class,
+    and the child classes need to only implement the
     abstract functions.
     """
 
@@ -79,7 +93,7 @@ class Meter(object):
         """Saves the meter parameters to a .npz file.
 
         Args:
-            npz_save_path: Path to .npz file
+            npz_save_path (str): Path to .npz file
                 where parameters will be saved.
         """
 
@@ -90,7 +104,7 @@ class Meter(object):
         """Loads meter parameters from a .npz file.
 
         Args:
-            npz_load_path: Path to .npz file
+            npz_load_path (str): Path to .npz file
                 where parameters will be loaded from.
 
         Returns:

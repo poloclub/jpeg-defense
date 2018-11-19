@@ -170,21 +170,26 @@ class AccuracyMeter(Meter):
 class TopKAccuracyMeter(Meter):
     """A meter to track top-k accuracy of the model."""
 
-    def __init__(self):
+    def __init__(self, k):
         """Initializes the meter.
 
         This meter tracks the following parameters:
             - ids
             - top_k_preds
             - y_true
+
+        Args:
+            k (int): Top k accuracies to be tracked.
         """
 
         super(TopKAccuracyMeter, self).__init__()
 
+        self._k = k
+
         arr_reducer = lambda a, b: np.append(a, b, axis=0)
 
         self._add_parameter('ids', np.zeros((0,), dtype=str), arr_reducer)
-        self._add_parameter('top_k_preds', np.zeros((0, 5)), arr_reducer)
+        self._add_parameter('top_k_preds', np.zeros((0, k)), arr_reducer)
         self._add_parameter('y_true', np.zeros((0,)), arr_reducer)
 
     def offer(self, top_k_preds, y_true, ids=None):
@@ -203,6 +208,7 @@ class TopKAccuracyMeter(Meter):
 
         ids = (ids if ids is not None
                else np.zeros((n,), dtype=str))
+        top_k_preds = top_k_preds[:, :self._k]
 
         self._update_parameters(
             ids=ids, top_k_preds=top_k_preds, y_true=y_true)

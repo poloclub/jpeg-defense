@@ -284,6 +284,7 @@ def preprocess_for_eval(image, height, width,
 def preprocess_image(image, height, width,
                      is_training=False,
                      bbox=None,
+                     cropping=True,
                      fast_mode=True,
                      add_image_summaries=True):
   """Pre-process one image for training or evaluation.
@@ -314,4 +315,6 @@ def preprocess_image(image, height, width,
     return preprocess_for_train(image, height, width, bbox, fast_mode,
                                 add_image_summaries=add_image_summaries)
   else:
-    return preprocess_for_eval(image, height, width, central_fraction=None)
+    central_fraction = 0.875 if cropping else None
+    return preprocess_for_eval(image, height, width,
+                               central_fraction=central_fraction)

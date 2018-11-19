@@ -36,23 +36,22 @@ attack_class_map = {
     'cwl2': CarliniWagnerL2}
 
 attack_options = {
-    'fgsm': [
-        {'ord': np.inf,
-         'eps': (2. * eps / 255.),
-         'clip_min': -1., 'clip_max': 1.}
-        for eps in range(2, 17, 2)],
-    'df': [
-        {'nb_candidate': 10,
-         'max_iter': 100,
-         'clip_min': -1., 'clip_max': 1.}],
-    'cwl2': [
-        {'confidence': 0,
-         'learning_rate': 5e-3,
-         'batch_size': 4,
-         'clip_min': -1., 'clip_max': 1.}]}
+    'fgsm': {
+        'ord': np.inf,
+        'eps': (2. * 8. / 255.),
+        'clip_min': -1., 'clip_max': 1.},
+    'df': {
+        'nb_candidate': 10,
+        'max_iter': 100,
+        'clip_min': -1., 'clip_max': 1.},
+    'cwl2': {
+        'confidence': 0,
+        'learning_rate': 5e-3,
+        'batch_size': 4,
+        'clip_min': -1., 'clip_max': 1.}}
 
 attack_identifiers = {
-    'fgsm': lambda p: 'ord_%s-eps_%s' % (p['ord'], int(p['eps'] * 255 / 2)),
+    'fgsm': lambda p: 'ord_%s_eps_%s' % (p['ord'], int(p['eps'] * 255 / 2)),
     'df': lambda p: 'noparams',
     'cwl2': lambda p: 'conf_%s' % p['confidence']}
 
@@ -65,10 +64,10 @@ defense_fn_map = {
     'tv_bregman': denoise_tv_bregman}
 
 defense_options = {
-    'jpeg': [{'quality': q} for q in range(100, 19, -10)],
-    'slq': [{'run': r} for r in range(10)],
-    'median_filter': [{'size': k} for k in [3, 5]],
-    'tv_bregman': [{'weight': w} for w in [30]]}
+    'jpeg': {'quality': 80},
+    'slq': {'run': 1},
+    'median_filter': {'size': 3},
+    'tv_bregman': {'weight': 30}}
 
 defense_identifiers = {
     'jpeg': lambda p: 'qual_%s' % p['quality'],

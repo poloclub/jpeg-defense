@@ -4,7 +4,8 @@ import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 
-from shield.constants import NUM_SAMPLES_VALIDATIONSET
+from shield.constants import \
+    NUM_SAMPLES_VALIDATIONSET, PREPROCESSED_TFRECORD_FILENAME
 from shield.opts import defense_fn_map, tf_defenses
 from shield.utils.io import encode_tf_examples, load_image_data_from_tfrecords
 
@@ -13,6 +14,7 @@ def preprocess(tfrecord_paths_expression,
                defense_name,
                defense_options,
                output_dir,
+               image_size=None,
                load_jpeg=False,
                decode_pixels=False):
     """Applies preprocessing to images and saves them.
@@ -40,20 +42,20 @@ def preprocess(tfrecord_paths_expression,
 
     # Define preprocessing function
     preprocessing_fn = \
-        lambda x: tf.cast(
+        (lambda x: tf.cast(
             255. * (x + 1.) / 2.,
-            tf.uint8) \
-        if not decode_pixels \
-        else lambda x: x
+            tf.uint8)) \
+        if not decode_pixels else lambda x: x
 
     # Define the writer that will save the output after preprocessing
     writer = tf.python_io.TFRecordWriter(
-        os.path.join(output_dir, 'attacked.tfrecord'))
+        os.path.join(output_dir, PREPROCESSED_TFRECORD_FILENAME))
 
     with tf.Graph().as_default():
         # Initialize the data loader node in the tensorflow graph
         ids, images, labels = load_image_data_from_tfrecords(
             tfrecord_paths_expression,
+            image_size=image_size,
             preprocessing_fn=preprocessing_fn,
             load_jpeg=load_jpeg,
             decode_pixels=decode_pixels)
@@ -73,6 +75,10 @@ def preprocess(tfrecord_paths_expression,
                 gpu_options=gpu_options))
 
         with sess.as_default():
+            # Initialize variables for the input loader
+            tf.local_variables_initializer().run()
+            tf.global_variables_initializer().run()
+
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 

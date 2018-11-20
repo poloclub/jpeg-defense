@@ -3,9 +3,12 @@ import os
 import tensorflow as tf
 from tqdm import tqdm
 
-from shield.constants import NUM_SAMPLES_VALIDATIONSET
+from shield.constants import \
+    ATTACKED_TFRECORD_FILENAME, \
+    NORMALIZED_L2_DISTANCE_NPZ_FILENAME, \
+    NUM_SAMPLES_VALIDATIONSET
 from shield.opts import attack_class_map, model_checkpoint_map, model_class_map
-from shield.slim.preprocessing.inception_preprocessing import preprocess_image
+from utils.slim.preprocessing.inception_preprocessing import preprocess_image
 from shield.utils.io import encode_tf_examples, load_image_data_from_tfrecords
 from shield.utils.metering import AverageNormalizedL2DistanceMeter
 
@@ -54,16 +57,15 @@ def attack(tfrecord_paths_expression,
     # Define preprocessing function
     img_size = Model.default_image_size
     preprocessing_fn = \
-        lambda x: preprocess_image(
+        (lambda x: preprocess_image(
             x, img_size, img_size,
             cropping=False,
-            is_training=False) \
-        if decode_pixels \
-        else lambda x: x
+            is_training=False)) \
+        if decode_pixels else lambda x: x
 
     # Define the writer that will save the output of the attack
     writer = tf.python_io.TFRecordWriter(
-        os.path.join(output_dir, 'attacked.tfrecord'))
+        os.path.join(output_dir, ATTACKED_TFRECORD_FILENAME))
 
     with tf.Graph().as_default():
         # Initialize the data loader node in the tensorflow graph
@@ -127,5 +129,5 @@ def attack(tfrecord_paths_expression,
             finally:
                 writer.close()
 
-                normalized_l2_distance.save(
-                    os.path.join(output_dir, 'normalized_l2_distance.npz'))
+                normalized_l2_distance.save(os.path.join(
+                    output_dir, NORMALIZED_L2_DISTANCE_NPZ_FILENAME))

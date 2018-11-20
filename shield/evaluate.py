@@ -1,11 +1,15 @@
 import os
 
+import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 
-from shield.constants import NUM_SAMPLES_VALIDATIONSET
+from shield.constants import \
+    ACCURACY_NPZ_FILENAME, \
+    NUM_SAMPLES_VALIDATIONSET, \
+    TOP5_ACCURACY_NPZ_FILENAME
 from shield.opts import model_checkpoint_map, model_class_map
-from shield.slim.preprocessing.inception_preprocessing import preprocess_image
+from utils.slim.preprocessing.inception_preprocessing import preprocess_image
 from shield.utils.io import load_image_data_from_tfrecords
 from shield.utils.metering import AccuracyMeter, TopKAccuracyMeter
 
@@ -49,12 +53,11 @@ def evaluate(tfrecord_paths_expression,
     # Define preprocessing function
     img_size = Model.default_image_size
     preprocessing_fn = \
-        lambda x: preprocess_image(
+        (lambda x: preprocess_image(
             x, img_size, img_size,
             cropping=cropping,
-            is_training=False) \
-        if decode_pixels \
-        else lambda x: x
+            is_training=False)) \
+        if decode_pixels else lambda x: x
 
     with tf.Graph().as_default():
         # Initialize the data loader node in the tensorflow graph
@@ -67,7 +70,6 @@ def evaluate(tfrecord_paths_expression,
 
         # Create rest of the tensorflow graph
         model = Model(X)
-        y_pred = tf.argmax(model.fprop(X)['probs'], 1)
         top_k_confidences, top_k_preds = \
             tf.nn.top_k(model.fprop(X)['probs'], k=5)
 
@@ -96,8 +98,11 @@ def evaluate(tfrecord_paths_expression,
                           unit='imgs', ncols=100) as pbar:
                     while not coord.should_stop():
                         # Get predictions for a batch
-                        ids_, y_true_, y_pred_, top_k_preds_ = \
-                            sess.run([ids, y_true, y_pred, top_k_preds])
+                        ids_, y_true_, top_k_preds_ = \
+                            sess.run([ids, y_true, top_k_preds])
+
+                        top_k_preds_ = np.squeeze(top_k_preds_)
+                        y_pred_ = top_k_preds_[:, 0]
 
                         # Update meters
                         accuracy.offer(y_pred_, y_true_, ids=ids_)
@@ -114,6 +119,6 @@ def evaluate(tfrecord_paths_expression,
 
             finally:
                 accuracy.save(
-                    os.path.join(output_dir, 'accuracy.npz'))
+                    os.path.join(output_dir, ACCURACY_NPZ_FILENAME))
                 top5_accuracy.save(
-                    os.path.join(output_dir, 'top5_accuracy.npz'))
+                    os.path.join(output_dir, TOP5_ACCURACY_NPZ_FILENAME))

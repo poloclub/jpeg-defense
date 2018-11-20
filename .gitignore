@@ -1,7 +1,10 @@
-.idea/
-models/weights
-*.pyc
 .DS_Store
+.idea/
+*.pyc
 
-/out/runs
+/data/checkpoints
+/data/train
+/data/validation
 /out/attacked
+/out/preprocessed
+/out/runs

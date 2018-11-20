@@ -36,9 +36,9 @@ def slq(x, qualities=(20, 40, 60, 80), patch_size=8):
         x_shape = tf.shape(x)
         n, m = x_shape[0], x_shape[1]
 
-        patch_n = (n / patch_size) \
+        patch_n = tf.cast(n / patch_size, dtype=tf.int32) \
             + tf.cond(n % patch_size > 0, lambda: one, lambda: zero)
-        patch_m = (m / patch_size) \
+        patch_m = tf.cast(m / patch_size, dtype=tf.int32) \
             + tf.cond(n % patch_size > 0, lambda: one, lambda: zero)
 
         R = tf.tile(tf.reshape(tf.range(n), (n, 1)), [1, m])
@@ -55,11 +55,10 @@ def slq(x, qualities=(20, 40, 60, 80), patch_size=8):
             name='random_layer_indices')
 
         x_compressed_stack = tf.stack(
-            map(
-                lambda q: tf.image.decode_jpeg(
-                    tf.image.encode_jpeg(
-                        x, format='rgb', quality=q), channels=3),
-                qualities),
+            list(map(
+                lambda q: tf.image.decode_jpeg(tf.image.encode_jpeg(
+                    x, format='rgb', quality=q), channels=3),
+                qualities)),
             name='compressed_images')
 
         x_slq = tf.gather_nd(x_compressed_stack, indices, name='final_image')

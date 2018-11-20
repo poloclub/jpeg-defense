@@ -1,8 +1,9 @@
 import tensorflow as tf
+from tensorflow.contrib.slim.python.slim.nets.resnet_v2 import \
+    resnet_arg_scope, resnet_v2_50
 
 from cleverhans.model import Model as CleverHansModel
 
-from shield.slim.nets.resnet_v2 import resnet_arg_scope, resnet_v2_50
 
 slim = tf.contrib.slim
 
@@ -19,8 +20,8 @@ def _get_updated_endpoints(original_end_points):
     """
 
     end_points = dict(original_end_points)
-    end_points['logits'] = end_points['resnet_v2_50/spatial_squeeze']
-    end_points['probs'] = tf.nn.softmax(end_points['logits'])
+    end_points['logits'] = end_points['resnet_v2_50/logits']
+    end_points['probs'] = end_points['predictions']
 
     return end_points
 
@@ -41,6 +42,8 @@ class ResNet50v2(CleverHansModel):
             to be restored in the graph.
     """
 
+    default_image_size = 299
+
     def __init__(self, x, num_classes=1001, is_training=False):
         """Initializes the tensorflow graph for the ResNet50-v2 model.
 
@@ -57,7 +60,6 @@ class ResNet50v2(CleverHansModel):
 
         self.x = x
         self.num_classes = num_classes
-        self.default_image_size = 299
 
         # populating the tensorflow graph
         with slim.arg_scope(resnet_arg_scope()):

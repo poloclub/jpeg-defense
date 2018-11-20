@@ -65,12 +65,12 @@ defense_fn_map = {
 
 defense_options = {
     'jpeg': {'quality': 80},
-    'slq': {'run': 1},
+    'slq': {},
     'median_filter': {'size': 3},
     'tv_bregman': {'weight': 30}}
 
 defense_identifiers = {
     'jpeg': lambda p: 'qual_%s' % p['quality'],
-    'slq': lambda p: 'run_%s' % p['run'],
+    'slq': lambda p: 'noparams',
     'median_filter': lambda p: 'size_%s' % p['size'],
     'tv_bregman': lambda p: 'weight_%s' % p['weight']}

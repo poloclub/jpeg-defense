@@ -117,7 +117,7 @@ def load_image_data_from_tfrecords(
         tuple: Image IDs, images and labels as batched tensors.
     """
 
-    print('reading %s', tfrecord_paths_expression)
+    print('reading %s' % tfrecord_paths_expression)
     filename_queue = tf.train.string_input_producer(
         glob.glob(tfrecord_paths_expression), num_epochs=1)
 

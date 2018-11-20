@@ -97,7 +97,7 @@ class Meter(object):
                 where parameters will be saved.
         """
 
-        with open(npz_save_path, 'w') as npzfile:
+        with open(npz_save_path, 'wb') as npzfile:
             np.savez(npzfile, **self._parameters)
 
     def load(self, npz_load_path):

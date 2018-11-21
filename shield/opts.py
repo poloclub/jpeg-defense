@@ -4,6 +4,7 @@ import numpy as np
 from cleverhans.attacks import FastGradientMethod, DeepFool, CarliniWagnerL2
 
 from shield.constants import CHECKPOINTS_DIR
+from shield.models.inception_v4 import InceptionV4
 from shield.models.resnet_50_v2 import ResNet50v2
 from shield.utils.defenses import (jpeg_compress, slq,
                                    median_filter,
@@ -12,7 +13,7 @@ from shield.utils.defenses import (jpeg_compress, slq,
 
 # -----
 
-models = ['resnet_50_v2']
+models = ['resnet_50_v2', 'inception_v4']
 attacks = ['fgsm', 'df', 'cwl2']
 defenses = ['jpeg', 'slq', 'median_filter', 'tv_bregman']
 tf_defenses = ['jpeg', 'slq']
@@ -20,13 +21,16 @@ tf_defenses = ['jpeg', 'slq']
 # -----
 
 model_class_map = {
-    'resnet_50_v2': ResNet50v2}
+    'resnet_50_v2': ResNet50v2,
+    'inception_v4': InceptionV4}
 
 model_checkpoint_map = {
-    'resnet_50_v2': os.path.join(CHECKPOINTS_DIR, 'resnet_50_v2.ckpt')}
+    'resnet_50_v2': os.path.join(CHECKPOINTS_DIR, 'resnet_v2_50.ckpt'),
+    'inception_v4': os.path.join(CHECKPOINTS_DIR, 'inception_v4.ckpt')}
 
 model_slim_name_map = {
-    'resnet_50_v2': 'resnet_v2_50'}
+    'resnet_50_v2': 'resnet_v2_50',
+    'inception_v4': 'inception_v4'}
 
 # -----
 

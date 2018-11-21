@@ -1,15 +1,14 @@
 from cleverhans.model import Model as CleverHansModel
 import tensorflow as tf
-from tensorflow.contrib.slim.python.slim.nets.resnet_v2 import \
-    resnet_arg_scope, resnet_v2_50
 
+from shield.models.inception_v4_base import inception_v4, inception_v4_arg_scope
 
 slim = tf.contrib.slim
 
 
 def _get_updated_endpoints(original_end_points):
     """Adds the keys 'logits' and 'probs' to the
-    end points dictionary of ResNet50-v2.
+    end points dictionary of Inception-v4.
 
     Args:
         original_end_points (dict): Original dictionary of end points
@@ -19,14 +18,14 @@ def _get_updated_endpoints(original_end_points):
     """
 
     end_points = dict(original_end_points)
-    end_points['logits'] = end_points['resnet_v2_50/logits']
-    end_points['probs'] = end_points['predictions']
+    end_points['logits'] = end_points['Logits']
+    end_points['probs'] = end_points['Predictions']
 
     return end_points
 
 
-class ResNet50v2(CleverHansModel):
-    """Wrapper class for the ResNet50-v2 model loaded from tensorflow slim.
+class InceptionV4(CleverHansModel):
+    """Wrapper class for the Inception-v4 model created using tensorflow slim.
 
     Attributes:
         x (tf.Variable): The variable in the tensorflow graph
@@ -44,7 +43,7 @@ class ResNet50v2(CleverHansModel):
     default_image_size = 299
 
     def __init__(self, x, num_classes=1001, is_training=False):
-        """Initializes the tensorflow graph for the ResNet50-v2 model.
+        """Initializes the tensorflow graph for the Inception-v4 model.
 
         Args:
             x (tf.Variable): The variable in the tensorflow graph
@@ -55,14 +54,14 @@ class ResNet50v2(CleverHansModel):
             is_training (bool): Whether batch_norm layers are in training mode.
         """
 
-        super(ResNet50v2, self).__init__()
+        super(InceptionV4, self).__init__()
 
         self.x = x
         self.num_classes = num_classes
 
         # populating the tensorflow graph
-        with slim.arg_scope(resnet_arg_scope()):
-            net, end_points = resnet_v2_50(
+        with slim.arg_scope(inception_v4_arg_scope()):
+            net, end_points = inception_v4(
                 x, num_classes=num_classes,
                 is_training=is_training, reuse=None)
 
@@ -108,8 +107,8 @@ class ResNet50v2(CleverHansModel):
             return self.end_points
 
         else:
-            with slim.arg_scope(resnet_arg_scope()):
-                net, end_points = resnet_v2_50(
+            with slim.arg_scope(inception_v4_arg_scope()):
+                net, end_points = inception_v4(
                     x, num_classes=self.num_classes,
                     is_training=False, reuse=tf.AUTO_REUSE)
 

@@ -73,7 +73,7 @@ bash setup/get_model_checkpoints.sh data/checkpoints
 
 ## Example Usage
 
-The **`main.py`** script can be used to perform all the experiments using the `--perform=attack|defend|evaluate` flags.
+The **`main.py`** script in the `shield` package can be used to perform all the experiments using the `--perform=attack|defend|evaluate` flags.
 
 - *attack* - Attacks the specified model with the specified method and its parameters (see `shield/opts.py`).
 

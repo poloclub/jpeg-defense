@@ -2,7 +2,8 @@
 .idea/
 *.pyc
 
-/data/checkpoints
+/data/checkpoints/*.ckpt
+/data/raw_data
 /data/train
 /data/validation
 /out/attacked

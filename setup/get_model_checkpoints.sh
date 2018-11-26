@@ -63,8 +63,8 @@ declare -r CHECKPOINT_DIR=$(cd "$1" && pwd)
 for CHECKPOINT_URL in ${CHECKPOINT_URLS[@]}; do
     DOWNLOAD_FILENAME=$(basename ${CHECKPOINT_URL})
 
-    download ${CHECKPOINT_URL} ${CHECKPOINT_DIR}
-    untar_and_cleanup ${CHECKPOINT_DIR}/${DOWNLOAD_FILENAME}
+    download "${CHECKPOINT_URL}" "${CHECKPOINT_DIR}"
+    untar_and_cleanup "${CHECKPOINT_DIR}/${DOWNLOAD_FILENAME}"
 done
 
 echo "[${TIMESTAMP}] Finished downloading checkpoint files"

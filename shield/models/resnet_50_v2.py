@@ -19,8 +19,8 @@ def _get_updated_endpoints(original_end_points):
     """
 
     end_points = dict(original_end_points)
-    end_points['logits'] = end_points['resnet_v2_50/logits']
-    end_points['probs'] = end_points['predictions']
+    end_points['logits'] = tf.squeeze(end_points['resnet_v2_50/logits'], [1, 2])
+    end_points['probs'] = tf.nn.softmax(end_points['logits'])
 
     return end_points
 

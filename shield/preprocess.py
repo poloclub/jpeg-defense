@@ -104,12 +104,15 @@ def preprocess(tfrecord_paths_expression,
 
         with sess.as_default():
             # Create rest of the tensorflow graph
-            X = tf.placeholder(shape=(None, None, None, 3), dtype=tf.float32)
-            model = Model(X)
+            X = tf.placeholder(
+                shape=(None, img_size, img_size, 3),
+                dtype=tf.float32)
+            Xp = tf.map_fn(lambda x: preprocessing_fn_model(x), X)
+            model = Model(Xp)
 
-            y_pred_prep = tf.argmax(model.fprop(X)['probs'], 1)
+            y_pred_prep = tf.argmax(model.fprop(Xp)['probs'], 1)
             _, top_k_preds_prep = \
-                tf.nn.top_k(model.fprop(X)['probs'], k=5)
+                tf.nn.top_k(model.fprop(Xp)['probs'], k=5)
 
             # Initialize and load model weights
             tf.local_variables_initializer().run()
@@ -136,7 +139,7 @@ def preprocess(tfrecord_paths_expression,
                         # Get model predictions on the preprocessed images
                         y_pred_prep_, top_k_preds_prep_ = sess.run(
                             [y_pred_prep, top_k_preds_prep],
-                            feed_dict={X: (2. * images_ / 255.) - 1.})
+                            feed_dict={X: images_ / 255.})
 
                         top_k_preds_prep_ = np.squeeze(top_k_preds_prep_)
 

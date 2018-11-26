@@ -5,23 +5,35 @@ import tensorflow as tf
 from tqdm import tqdm
 
 from shield.constants import \
-    NUM_SAMPLES_VALIDATIONSET, PREPROCESSED_TFRECORD_FILENAME
-from shield.opts import defense_fn_map, tf_defenses
+    ACCURACY_NPZ_FILENAME, \
+    NUM_SAMPLES_VALIDATIONSET, \
+    PREPROCESSED_TFRECORD_FILENAME, \
+    TOP5_ACCURACY_NPZ_FILENAME
+from shield.opts import \
+    defense_fn_map, model_checkpoint_map, model_class_map, tf_defenses
+from shield.utils.slim.preprocessing.inception_preprocessing import \
+    preprocess_image
 from shield.utils.io import encode_tf_examples, load_image_data_from_tfrecords
+from shield.utils.metering import AccuracyMeter, TopKAccuracyMeter
 
 
 def preprocess(tfrecord_paths_expression,
+               model_name,
                defense_name,
                defense_options,
                output_dir,
-               image_size=None,
+               model_checkpoint_path=None,
                load_jpeg=False,
-               decode_pixels=False):
+               decode_pixels=False,
+               cropping=True):
     """Applies preprocessing to images and saves them.
 
     Args:
         tfrecord_paths_expression (str):
             Wildcard expression for path to the tfrecord files.
+        model_name (str):
+            Name of the model to be evaluated.
+            It should correspond to one of the models in `opts.py`.
         defense_name (str):
             Name of the preprocessing technique to be applied.
             It should correspond to one of the defenses in `opts.py`.
@@ -30,22 +42,38 @@ def preprocess(tfrecord_paths_expression,
             This dictionary is passed as keyword arguments to the `defense_fn`
         output_dir (str):
             The results are saved to this directory.
+        model_checkpoint_path (str):
+            If not None, the model weights are loaded from this path.
         load_jpeg (bool):
             Whether the tfrecord contains images in JPEG binary format.
         decode_pixels (bool):
             Whether the tfrecord contains image data
             in pixel space or contains normalized values.
+        cropping (bool):
+            Whether a central cropping of 0.875 is to be
+            applied before evaluation.
     """
 
     # Define model and defense function
+    Model = model_class_map[model_name]
     defense_fn = defense_fn_map[defense_name]
 
-    # Define preprocessing function
+    # Define meters we want to track
+    accuracy = AccuracyMeter()
+    top5_accuracy = TopKAccuracyMeter(k=5)
+
+    # Define preprocessing functions
+    img_size = Model.default_image_size
     preprocessing_fn = \
         (lambda x: tf.cast(
             255. * (x + 1.) / 2.,
             tf.uint8)) \
         if not decode_pixels else lambda x: x
+    preprocessing_fn_model = \
+        lambda x: preprocess_image(
+            x, img_size, img_size,
+            cropping=cropping,
+            is_training=False)
 
     # Define the writer that will save the output after preprocessing
     writer = tf.python_io.TFRecordWriter(
@@ -53,9 +81,9 @@ def preprocess(tfrecord_paths_expression,
 
     with tf.Graph().as_default():
         # Initialize the data loader node in the tensorflow graph
-        ids, images, labels = load_image_data_from_tfrecords(
+        ids, images, y_true = load_image_data_from_tfrecords(
             tfrecord_paths_expression,
-            image_size=image_size,
+            image_size=img_size,
             preprocessing_fn=preprocessing_fn,
             load_jpeg=load_jpeg,
             decode_pixels=decode_pixels)
@@ -75,19 +103,28 @@ def preprocess(tfrecord_paths_expression,
                 gpu_options=gpu_options))
 
         with sess.as_default():
-            # Initialize variables for the input loader
+            # Create rest of the tensorflow graph
+            X = tf.placeholder(shape=(None, None, None, 3), dtype=tf.float32)
+            model = Model(X)
+
+            top_k_confidences_prep, top_k_preds_prep = \
+                tf.nn.top_k(model.fprop(X)['probs'], k=5)
+
+            # Initialize and load model weights
             tf.local_variables_initializer().run()
             tf.global_variables_initializer().run()
+            if model_checkpoint_path is None:
+                model_checkpoint_path = model_checkpoint_map[model_name]
+            model.load_weights(model_checkpoint_path, sess=sess)
 
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
             try:
-                with tqdm(total=NUM_SAMPLES_VALIDATIONSET,
-                          unit='imgs', ncols=100) as pbar:
+                with tqdm(total=NUM_SAMPLES_VALIDATIONSET, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Load the images
-                        ids_, images_, labels_ = sess.run([ids, images, labels])
+                        ids_, images_, y_true_ = sess.run([ids, images, y_true])
 
                         # Apply preprocessing for non-TF defenses
                         if defense_name not in tf_defenses:
@@ -95,13 +132,37 @@ def preprocess(tfrecord_paths_expression,
                                 [defense_fn(image_, **defense_options)
                                  for image_ in images_])
 
+                        # Get model predictions on the preprocessed images
+                        top_k_preds_prep_ = sess.run(
+                            top_k_preds_prep,
+                            feed_dict={X: (2. * images_ / 255.) - 1.})
+                        top_k_preds_prep_ = np.squeeze(top_k_preds_prep_)
+                        y_pred_prep_ = top_k_preds_prep_[:, 0]
+
+                        # Update meter
+                        accuracy.offer(
+                            y_pred_prep_, y_true_, ids=ids_)
+                        top5_accuracy.offer(
+                            top_k_preds_prep_, y_true_, ids=ids_)
+
                         # Save the preprocessed images
                         for example in encode_tf_examples(
-                                ids_, images_, labels_):
+                                ids_, images_, y_true_):
                             writer.write(example.SerializeToString())
 
+                        pbar.set_postfix(
+                            top_1_accuracy=accuracy.evaluate(),
+                            top_5_accuracy=top5_accuracy.evaluate())
                         pbar.update(len(ids_))
 
             except tf.errors.OutOfRangeError:
                 coord.request_stop()
                 coord.join(threads)
+
+            finally:
+                writer.close()
+
+                accuracy.save(
+                    os.path.join(output_dir, ACCURACY_NPZ_FILENAME))
+                top5_accuracy.save(
+                    os.path.join(output_dir, TOP5_ACCURACY_NPZ_FILENAME))

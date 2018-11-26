@@ -9,7 +9,8 @@ from shield.constants import \
     NUM_SAMPLES_VALIDATIONSET, \
     TOP5_ACCURACY_NPZ_FILENAME
 from shield.opts import model_checkpoint_map, model_class_map
-from utils.slim.preprocessing.inception_preprocessing import preprocess_image
+from shield.utils.slim.preprocessing.inception_preprocessing import \
+    preprocess_image
 from shield.utils.io import load_image_data_from_tfrecords
 from shield.utils.metering import AccuracyMeter, TopKAccuracyMeter
 
@@ -94,8 +95,7 @@ def evaluate(tfrecord_paths_expression,
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
             try:
-                with tqdm(total=NUM_SAMPLES_VALIDATIONSET,
-                          unit='imgs', ncols=100) as pbar:
+                with tqdm(total=NUM_SAMPLES_VALIDATIONSET, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Get predictions for a batch
                         ids_, y_true_, top_k_preds_ = \

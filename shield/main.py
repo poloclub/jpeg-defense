@@ -116,11 +116,10 @@ def main(use_gpu, perform,
         os.makedirs(output_dir)
 
         shield_preprocess(
-            input_tfrecords,
-            defense, defense_options_updated,
-            output_dir,
-            image_size=RESNET_IMAGE_SIZE,
-            load_jpeg=False, decode_pixels=False)
+            input_tfrecords, model,
+            defense, defense_options_updated, output_dir,
+            load_jpeg=False, decode_pixels=False,
+            model_checkpoint_path=model_checkpoint_path)
 
     elif perform == 'evaluate':
         assert attack is not None

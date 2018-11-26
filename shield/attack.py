@@ -1,16 +1,23 @@
 import os
 
+import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 
 from shield.constants import \
     ATTACKED_TFRECORD_FILENAME, \
+    ACCURACY_NPZ_FILENAME, \
     NORMALIZED_L2_DISTANCE_NPZ_FILENAME, \
-    NUM_SAMPLES_VALIDATIONSET
+    NUM_SAMPLES_VALIDATIONSET, \
+    TOP5_ACCURACY_NPZ_FILENAME
 from shield.opts import attack_class_map, model_checkpoint_map, model_class_map
-from utils.slim.preprocessing.inception_preprocessing import preprocess_image
+from shield.utils.slim.preprocessing.inception_preprocessing import \
+    preprocess_image
 from shield.utils.io import encode_tf_examples, load_image_data_from_tfrecords
-from shield.utils.metering import AverageNormalizedL2DistanceMeter
+from shield.utils.metering import \
+    AccuracyMeter, \
+    AverageNormalizedL2DistanceMeter, \
+    TopKAccuracyMeter
 
 
 def attack(tfrecord_paths_expression,
@@ -52,6 +59,8 @@ def attack(tfrecord_paths_expression,
     Attack = attack_class_map[attack_name]
 
     # Define meters we want to track
+    accuracy = AccuracyMeter()
+    top5_accuracy = TopKAccuracyMeter(k=5)
     normalized_l2_distance = AverageNormalizedL2DistanceMeter()
 
     # Define preprocessing function
@@ -90,6 +99,10 @@ def attack(tfrecord_paths_expression,
             model = Model(X_ben)
             X_adv = Attack(model).generate(
                 X_ben, **attack_options)
+            X_adv.set_shape((None, None, None, 3))
+
+            top_k_confidences_adv, top_k_preds_adv = \
+                tf.nn.top_k(model.fprop(X_adv)['probs'], k=5)
 
             # Initialize and load model weights
             tf.local_variables_initializer().run()
@@ -102,14 +115,19 @@ def attack(tfrecord_paths_expression,
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
             try:
-                with tqdm(total=NUM_SAMPLES_VALIDATIONSET,
-                          unit='imgs', ncols=100) as pbar:
+                with tqdm(total=NUM_SAMPLES_VALIDATIONSET, unit='imgs') as pbar:
                     while not coord.should_stop():
-                        # Get attacked images for a batch
-                        ids_, X_ben_, X_adv_, y_true_ = sess.run(
-                            [ids, X_ben, X_adv, y_true])
+                        # Get attacked images and predicted labels for a batch
+                        ids_, X_ben_, X_adv_, \
+                            top_k_preds_adv_, y_true_ = sess.run(
+                                [ids, X_ben, X_adv, top_k_preds_adv, y_true])
+
+                        top_k_preds_adv_ = np.squeeze(top_k_preds_adv_)
+                        y_pred_adv_ = top_k_preds_adv_[:, 0]
 
                         # Update meter
+                        accuracy.offer(y_pred_adv_, y_true_, ids=ids_)
+                        top5_accuracy.offer(top_k_preds_adv_, y_true_, ids=ids_)
                         normalized_l2_distance.offer(X_ben_, X_adv_)
 
                         # Save the attacked images
@@ -118,6 +136,8 @@ def attack(tfrecord_paths_expression,
                             writer.write(example.SerializeToString())
 
                         pbar.set_postfix(
+                            top_1_accuracy=accuracy.evaluate(),
+                            top_5_accuracy=top5_accuracy.evaluate(),
                             average_normalized_l2=
                             normalized_l2_distance.evaluate())
                         pbar.update(len(ids_))
@@ -129,5 +149,9 @@ def attack(tfrecord_paths_expression,
             finally:
                 writer.close()
 
+                accuracy.save(
+                    os.path.join(output_dir, ACCURACY_NPZ_FILENAME))
+                top5_accuracy.save(
+                    os.path.join(output_dir, TOP5_ACCURACY_NPZ_FILENAME))
                 normalized_l2_distance.save(os.path.join(
                     output_dir, NORMALIZED_L2_DISTANCE_NPZ_FILENAME))

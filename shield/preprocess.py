@@ -107,7 +107,8 @@ def preprocess(tfrecord_paths_expression,
             X = tf.placeholder(shape=(None, None, None, 3), dtype=tf.float32)
             model = Model(X)
 
-            top_k_confidences_prep, top_k_preds_prep = \
+            y_pred_prep = tf.argmax(model.fprop(X)['probs'], 1)
+            _, top_k_preds_prep = \
                 tf.nn.top_k(model.fprop(X)['probs'], k=5)
 
             # Initialize and load model weights
@@ -133,11 +134,11 @@ def preprocess(tfrecord_paths_expression,
                                  for image_ in images_])
 
                         # Get model predictions on the preprocessed images
-                        top_k_preds_prep_ = sess.run(
-                            top_k_preds_prep,
+                        y_pred_prep_, top_k_preds_prep_ = sess.run(
+                            [y_pred_prep, top_k_preds_prep],
                             feed_dict={X: (2. * images_ / 255.) - 1.})
+
                         top_k_preds_prep_ = np.squeeze(top_k_preds_prep_)
-                        y_pred_prep_ = top_k_preds_prep_[:, 0]
 
                         # Update meter
                         accuracy.offer(

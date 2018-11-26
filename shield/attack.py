@@ -97,11 +97,12 @@ def attack(tfrecord_paths_expression,
         with sess.as_default():
             # Create rest of the tensorflow graph
             model = Model(X_ben)
-            X_adv = Attack(model).generate(
-                X_ben, **attack_options)
+            attack = Attack(model)
+            X_adv = attack.generate(X_ben, **attack_options)
             X_adv.set_shape((None, None, None, 3))
 
-            top_k_confidences_adv, top_k_preds_adv = \
+            y_pred_adv = tf.argmax(model.fprop(X_adv)['probs'], 1)
+            _, top_k_preds_adv = \
                 tf.nn.top_k(model.fprop(X_adv)['probs'], k=5)
 
             # Initialize and load model weights
@@ -119,11 +120,13 @@ def attack(tfrecord_paths_expression,
                     while not coord.should_stop():
                         # Get attacked images and predicted labels for a batch
                         ids_, X_ben_, X_adv_, \
-                            top_k_preds_adv_, y_true_ = sess.run(
-                                [ids, X_ben, X_adv, top_k_preds_adv, y_true])
+                            y_true_, y_pred_adv_, \
+                            top_k_preds_adv_ = sess.run(
+                                [ids, X_ben, X_adv,
+                                 y_true, y_pred_adv,
+                                 top_k_preds_adv])
 
                         top_k_preds_adv_ = np.squeeze(top_k_preds_adv_)
-                        y_pred_adv_ = top_k_preds_adv_[:, 0]
 
                         # Update meter
                         accuracy.offer(y_pred_adv_, y_true_, ids=ids_)

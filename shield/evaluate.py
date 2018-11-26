@@ -71,7 +71,8 @@ def evaluate(tfrecord_paths_expression,
 
         # Create rest of the tensorflow graph
         model = Model(X)
-        top_k_confidences, top_k_preds = \
+        y_pred = tf.argmax(model.fprop(X)['probs'], 1)
+        _, top_k_preds = \
             tf.nn.top_k(model.fprop(X)['probs'], k=5)
 
         # Initialize the tensorflow session
@@ -98,11 +99,10 @@ def evaluate(tfrecord_paths_expression,
                 with tqdm(total=NUM_SAMPLES_VALIDATIONSET, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Get predictions for a batch
-                        ids_, y_true_, top_k_preds_ = \
-                            sess.run([ids, y_true, top_k_preds])
+                        ids_, y_true_, y_pred_, top_k_preds_ = \
+                            sess.run([ids, y_true, y_pred, top_k_preds])
 
                         top_k_preds_ = np.squeeze(top_k_preds_)
-                        y_pred_ = top_k_preds_[:, 0]
 
                         # Update meters
                         accuracy.offer(y_pred_, y_true_, ids=ids_)

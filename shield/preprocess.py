@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 from shield.constants import \
     ACCURACY_NPZ_FILENAME, \
+    NUM_SAMPLES_DEMO, \
     NUM_SAMPLES_VALIDATIONSET, \
     PREPROCESSED_TFRECORD_FILENAME, \
     TOP5_ACCURACY_NPZ_FILENAME
@@ -124,10 +125,8 @@ def preprocess(tfrecord_paths_expression,
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-            n = 500
-            i = 0
             try:
-                with tqdm(total=n, unit='imgs') as pbar:
+                with tqdm(total=NUM_SAMPLES_DEMO, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Load the images
                         ids_, images_, y_true_ = sess.run([ids, images, y_true])
@@ -161,8 +160,7 @@ def preprocess(tfrecord_paths_expression,
                             top_5_accuracy=top5_accuracy.evaluate())
                         pbar.update(len(ids_))
 
-                        i += len(ids_)
-                        if i >= n:
+                        if pbar.n >= NUM_SAMPLES_DEMO:
                             break
 
             except tf.errors.OutOfRangeError:

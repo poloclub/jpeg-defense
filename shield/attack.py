@@ -8,6 +8,7 @@ from shield.constants import \
     ATTACKED_TFRECORD_FILENAME, \
     ACCURACY_NPZ_FILENAME, \
     NORMALIZED_L2_DISTANCE_NPZ_FILENAME, \
+    NUM_SAMPLES_DEMO, \
     NUM_SAMPLES_VALIDATIONSET, \
     TOP5_ACCURACY_NPZ_FILENAME
 from shield.opts import attack_class_map, model_checkpoint_map, model_class_map
@@ -115,10 +116,8 @@ def attack(tfrecord_paths_expression,
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-            n = 500
-            i = 0
             try:
-                with tqdm(total=n, unit='imgs') as pbar:
+                with tqdm(total=NUM_SAMPLES_DEMO, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Get attacked images and predicted labels for a batch
                         ids_, X_ben_, X_adv_, \
@@ -147,8 +146,7 @@ def attack(tfrecord_paths_expression,
                             normalized_l2_distance.evaluate())
                         pbar.update(len(ids_))
 
-                        i += len(ids_)
-                        if i >= n:
+                        if pbar.n >= NUM_SAMPLES_DEMO:
                             break
 
             except tf.errors.OutOfRangeError:

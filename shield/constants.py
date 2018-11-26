@@ -19,6 +19,7 @@ TOP5_ACCURACY_NPZ_FILENAME = 'top5_accuracy.npz'
 NORMALIZED_L2_DISTANCE_NPZ_FILENAME = 'normalized_l2_distance.npz'
 
 NUM_SAMPLES_VALIDATIONSET = 50000
+NUM_SAMPLES_DEMO = 1000
 RESNET_IMAGE_SIZE = 299
 
 if __name__ == '__main__':

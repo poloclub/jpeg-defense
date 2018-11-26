@@ -115,8 +115,10 @@ def attack(tfrecord_paths_expression,
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+            n = 500
+            i = 0
             try:
-                with tqdm(total=NUM_SAMPLES_VALIDATIONSET, unit='imgs') as pbar:
+                with tqdm(total=n, unit='imgs') as pbar:
                     while not coord.should_stop():
                         # Get attacked images and predicted labels for a batch
                         ids_, X_ben_, X_adv_, \
@@ -144,6 +146,10 @@ def attack(tfrecord_paths_expression,
                             average_normalized_l2=
                             normalized_l2_distance.evaluate())
                         pbar.update(len(ids_))
+
+                        i += len(ids_)
+                        if i >= n:
+                            break
 
             except tf.errors.OutOfRangeError:
                 coord.request_stop()

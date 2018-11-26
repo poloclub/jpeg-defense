@@ -88,7 +88,7 @@ def load_image_data_from_tfrecords(
         load_jpeg=False,
         decode_pixels=False,
         image_size=None,
-        batch_size=16,
+        batch_size=20,
         num_preprocessing_threads=4):
     """Loads image data from tfrecord files.
 

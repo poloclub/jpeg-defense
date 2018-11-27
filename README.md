@@ -86,6 +86,8 @@ python main.py with \
 ```
 
 - *defend* - Defends the specified attacked images with the specified defense and its parameters (see `shield/opts.py`).
+The defense uses the attack parameters only to determine which images are loaded for preprocessing,
+as these parameters are not used by the preprocessing itself.
 
 ```bash
 python main.py with \                               

@@ -2,5 +2,5 @@ cleverhans==2.1.0
 numpy==1.14.0
 sacred==0.7.4
 scikit-image
-tensorflow==1.12.0
+tensorflow==2.7.2
 tqdm==4.28.1
